@@ -1,4 +1,5 @@
 const lodash = require('lodash');
+const fs = require('fs');
 
 const Article = require('../models/Article');
 const validateArticle = require('../helpers/article.validate');
@@ -136,10 +137,46 @@ const updateArticle = (request, response) => {
     });
 };
 
+const uploadImg = (request, response) => {
+    // Validate if comming an file.
+    if (lodash.isNil(request.file) || lodash.isNil(request.files)) {
+        return response.status(400).json({
+            code: 400,
+            message: 'No se cargó ningun archivo de imagen.'
+        });
+    }
+
+    // Get name file.
+    let fileName = request.file.originalname;
+
+    // Get extension.
+    let fileSplit = fileName.split('\.');
+    let fileExtension = fileSplit[1];
+
+    // Validate extension.
+    if (!lodash.isEqual(fileExtension, "jpg") && !lodash.isEqual(fileExtension, "png") &&
+        !lodash.isEqual(fileExtension, "jpeg") && !lodash.isEqual(fileExtension, "gif")) {
+        // Delete file uploaded.
+        fs.unlink(request.file.path, (error) => {
+            return response.status(400).json({
+                code: 400,
+                message: 'El formato de la imagen no es válida.'
+            });
+        });
+    } else {
+        return response.status(200).json({
+            code: 200,
+            message: 'Imagen cargada exitosamente.',
+            file: request.file
+        });
+    }
+}
+
 module.exports = {
     deleteArticle,
     getAllArticles,
     getArticle,
     saveArticle,
-    updateArticle
+    updateArticle,
+    uploadImg
 }
