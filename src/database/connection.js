@@ -6,6 +6,10 @@ const DB_PORT       = '27017';
 const DB_NAME       = "my_blog";
 const DB_URL        = DB_TYPE + '://' + DB_HOST + ':' + DB_PORT + '/' + DB_NAME;
 
+/**
+ * @description Method to create an conection to DB.
+ * @returns {void}
+ */
 const connection = async () => {
     mongoose.set("strictQuery", false);
     await mongoose.connect(DB_URL)
@@ -17,7 +21,6 @@ const connection = async () => {
     });
 }
 
-// Exportar
 module.exports = {
     connection
 }

@@ -1,5 +1,10 @@
 const validator = require('validator');
 
+/**
+ * @description Method to create an article.
+ * @param {Object} params - Article data to validate.
+ * @returns {Object}
+ */
 const validateArticle = (params) => {
     // Validate title.
     let validateTitle = !validator.isEmpty(params.title) &&

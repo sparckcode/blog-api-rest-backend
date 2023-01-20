@@ -4,6 +4,12 @@ const fs = require('fs');
 const Article = require('../models/Article');
 const validateArticle = require('../helpers/article.validate');
 
+/**
+ * @description Method to create an article.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
 const saveArticle = (request, response) => {
     // Get params.
     let params = request.body;
@@ -36,6 +42,12 @@ const saveArticle = (request, response) => {
     });
 };
 
+/**
+ * @description Method list all articles.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
 const getAllArticles = (request, response) => {
     let query = Article.find({});
 
@@ -61,6 +73,12 @@ const getAllArticles = (request, response) => {
     });
 }
 
+/**
+ * @description Method to get a article.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
 const getArticle = (request, response) => {
     // Get id.
     let idArticle = request.params.id;
@@ -82,6 +100,12 @@ const getArticle = (request, response) => {
     });
 }
 
+/**
+ * @description Method to delete an article.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
 const deleteArticle = (request, response) => {
     // Get id.
     let idArticle = request.params.id;
@@ -103,6 +127,12 @@ const deleteArticle = (request, response) => {
     });
 };
 
+/**
+ * @description Method to update an article.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
 const updateArticle = (request, response) => {
     // Get id.
     let idArticle = request.params.id;
@@ -137,6 +167,12 @@ const updateArticle = (request, response) => {
     });
 };
 
+/**
+ * @description Method to upload an image to article.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
 const uploadImg = (request, response) => {
     // Validate if comming an file.
     if (lodash.isNil(request.file) || lodash.isNil(request.files)) {
