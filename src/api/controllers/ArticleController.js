@@ -1,5 +1,6 @@
 const lodash = require('lodash');
 const fs = require('fs');
+const path = require('path');
 
 const Article = require('../models/Article');
 const validateArticle = require('../helpers/article.validate');
@@ -147,7 +148,7 @@ const updateArticle = (request, response) => {
         return response.status(400).json({
             code: 400,
             message: 'Error: ' + error
-        })
+        });
     }
 
     // Find and update article.
@@ -175,7 +176,7 @@ const updateArticle = (request, response) => {
  */
 const uploadImg = (request, response) => {
     // Validate if comming an file.
-    if (lodash.isNil(request.file) || lodash.isNil(request.files)) {
+    if (lodash.isNil(request.file) && lodash.isNil(request.files)) {
         return response.status(400).json({
             code: 400,
             message: 'No se cargó ningun archivo de imagen.'
@@ -200,18 +201,50 @@ const uploadImg = (request, response) => {
             });
         });
     } else {
-        return response.status(200).json({
-            code: 200,
-            message: 'Imagen cargada exitosamente.',
-            file: request.file
+        // Get id.
+        let idArticle = request.params.id;
+
+        // Find and update article.
+        Article.findByIdAndUpdate({ _id: idArticle }, { image: request.file.filename }, { new: true }, (error, articleUpdated) => {
+            if (error || lodash.isNil(articleUpdated)) {
+                return response.status(400).json({
+                    code: 400,
+                    message: 'No se pudo actualizar el artículo.'
+                });
+            }
+
+            return response.status(200).json({
+                code: 200,
+                message: 'Artículo actualizado exitosamente.',
+                articleUpdated: articleUpdated,
+                file: request.file
+            });
         });
     }
+}
+
+const getImage = (request, response) => {
+    let file = request.params.file;
+    let filePath = './src/assets/image-articles/' + file;
+
+    fs.access(filePath, (exists) => {
+        console.log("exists: ", exists);
+        if (lodash.isNil(exists)) {
+            return response.sendFile(path.resolve(filePath));
+        } else {
+            return response.status(400).json({
+                code: 400,
+                message: 'No se encontró la imagen.'
+            });
+        }
+    })
 }
 
 module.exports = {
     deleteArticle,
     getAllArticles,
     getArticle,
+    getImage,
     saveArticle,
     updateArticle,
     uploadImg
