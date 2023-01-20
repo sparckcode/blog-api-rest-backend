@@ -223,12 +223,20 @@ const uploadImg = (request, response) => {
     }
 }
 
+/**
+ * @description Method to show a image.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
 const getImage = (request, response) => {
+    // Get file name to search.
     let file = request.params.file;
+    // Set path file.
     let filePath = './src/assets/image-articles/' + file;
 
+    // Validate if file exists.
     fs.access(filePath, (exists) => {
-        console.log("exists: ", exists);
         if (lodash.isNil(exists)) {
             return response.sendFile(path.resolve(filePath));
         } else {
@@ -238,7 +246,39 @@ const getImage = (request, response) => {
             });
         }
     })
-}
+};
+
+/**
+ * @description Method to get articles using a searcher.
+ * @param {any} request 
+ * @param {any} response 
+ * @returns {Object}
+ */
+const searcher = (request, response) => {
+    // Get string to search.
+    let search = request.params.str;
+
+    // Searching.
+    Article.find({"$or": [
+        {"title": {"$regex": search, "$options": "i"}},
+        {"content": {"$regex": search, "$options": "i"}},
+    ]})
+    .sort({created: -1})
+    .exec((error, getArticles) => {
+        if (error || lodash.isEmpty(getArticles)) {
+            return response.status(404).json({
+                code: 404,
+                message: 'No se encontró ningún artículo con la búsqueda: ' + search
+            });
+        }
+
+        return response.status(200).json({
+            code: 200,
+            message: 'Lista de artículos buscados.',
+            articles: getArticles
+        });
+    });
+};
 
 module.exports = {
     deleteArticle,
@@ -247,5 +287,6 @@ module.exports = {
     getImage,
     saveArticle,
     updateArticle,
-    uploadImg
+    uploadImg,
+    searcher
 }
