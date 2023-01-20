@@ -1,29 +1,20 @@
 const lodash = require('lodash');
-const validator = require('validator');
 
 const Article = require('../models/Article');
+const validateArticle = require('../helpers/article.validate');
 
 const saveArticle = (request, response) => {
     // Get params.
     let params = request.body;
     
-    // Validate params.
+    // Validate data.
     try {
-        // Validate title.
-        let validateTitle = !validator.isEmpty(params.title) &&
-            validator.isLength(params.title, { min: 25, max: 100 });
-        // Validate content.
-        let validateContent = !validator.isEmpty(params.content);
-
-        // Show error if validation is failed.
-        if (!validateTitle || !validateContent) {
-            throw new Error('Datos inválidos');
-        }
+        validateArticle.validateArticle(params);   
     } catch (error) {
         return response.status(400).json({
             code: 400,
-            message: error
-        });
+            message: 'Error: ' + error
+        })
     }
 
     // Create article.
@@ -120,21 +111,12 @@ const updateArticle = (request, response) => {
 
     // Validate data.
     try {
-        // Validate title.
-        let validateTitle = !validator.isEmpty(params.title) &&
-            validator.isLength(params.title, { min: 25, max: 100 });
-        // Validate content.
-        let validateContent = !validator.isEmpty(params.content);
-
-        // Show error if validation is failed.
-        if (!validateTitle || !validateContent) {
-            throw new Error('Datos inválidos');
-        }
+        validateArticle.validateArticle(params);   
     } catch (error) {
         return response.status(400).json({
             code: 400,
-            message: error
-        });
+            message: 'Error: ' + error
+        })
     }
 
     // Find and update article.
