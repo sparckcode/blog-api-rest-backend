@@ -2,6 +2,8 @@ const { connection } = require('./database/connection');
 const express = require('express');
 const cors = require('cors');
 
+const ArticleRoutes = require('./api/routes/ArticleRoute');
+
 // Mensaje de inicialización.
 console.log("App corriendo.");
 
@@ -16,34 +18,15 @@ const port = 3300;
 // Configuración de CORS.
 app.use(cors());
 
-// Convertir body a JSON.
+// Recibir datos con content-type app/json
 app.use(express.json());
+// Recibir datos de x-www-form-encode.
+app.use(express.urlencoded({
+    extended: true
+}))
 
 // Lista de rutas.
-app.get('/', (request, response) => {
-    return response.status(200).json({
-        app: 'blog',
-        version: '1.0.0',
-        autor: 'Sparck Code'
-    });
-});
-
-app.get('/test', (request, response) => {
-    console.log("Endpoint: test");
-    return response.status(200).json(
-    [
-        {
-            curso: 'Master en React',
-            autor: 'Marcos Brandon',
-            url: 'http://sparckcode.com/cursos/master-react'
-        },
-        {
-            curso: 'Master en React',
-            autor: 'Marcos Brandon',
-            url: 'http://sparckcode.com/cursos/master-react'
-        }
-    ]);
-});
+app.use('/api', ArticleRoutes);
 
 // Crear servidor y escuchar peticiones HTTP.
 app.listen(port, () => {
